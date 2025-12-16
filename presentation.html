@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>生成式 AI 與資訊安全：從破壞者到守護者</title>
+    <style>
+      :root {
+        --bg-color: #0f172a;
+        --text-color: #e2e8f0;
+        --accent-color: #38bdf8;
+        --secondary-accent: #f472b6;
+        --glass-bg: rgba(30, 41, 59, 0.7);
+        --border-color: rgba(255, 255, 255, 0.1);
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Inter", system-ui, -apple-system, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        overflow: hidden;
+        width: 100vw;
+        height: 100vh;
+      }
+
+      #presentation {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .slide {
+        position: absolute;
+        width: 80%;
+        height: 80%;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        transform: scale(0.95);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        pointer-events: none;
+      }
+
+      .slide.active {
+        opacity: 1;
+        transform: scale(1);
+        pointer-events: auto;
+        z-index: 10;
+      }
+
+        .slide-content {
+            background: var(--glass-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 3rem;
+            /* height: 100%; Removed fixed height to allow flexibility */
+            max-height: 100%; /* Constraint height to container */
+            overflow-y: auto; /* Allow scrolling */
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            
+            /* Custom Scrollbar */
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-color) rgba(255, 255, 255, 0.1);
+        }
+
+        /* Scrollbar for Webkit */
+        .slide-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        .slide-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        .slide-content::-webkit-scrollbar-thumb {
+            background-color: var(--accent-color);
+            border-radius: 4px;
+        }
+
+      h1,
+      h2 {
+        color: var(--accent-color);
+        margin-top: 0;
+      }
+
+      h1 {
+        font-size: 3rem;
+        margin-bottom: 0.5em;
+        text-align: center;
+      }
+      h2 {
+        font-size: 2.2rem;
+        border-bottom: 2px solid var(--secondary-accent);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+      }
+      h3 {
+        color: var(--secondary-accent);
+        font-size: 1.5rem;
+        margin-top: 1.5rem;
+      }
+
+      ul {
+        font-size: 1.25rem;
+        line-height: 1.6;
+      }
+      li {
+        margin-bottom: 0.8rem;
+      }
+      strong {
+        color: #fff;
+      }
+
+      .stat-highlight {
+        font-size: 1.5rem;
+        color: var(--secondary-accent);
+        font-weight: bold;
+        background: rgba(244, 114, 182, 0.1);
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+      }
+
+      .columns {
+        display: flex;
+        gap: 2rem;
+        flex: 1;
+      }
+      .col {
+        flex: 1;
+      }
+
+      .footer-citation {
+        margin-top: auto;
+        font-size: 0.8rem;
+        color: #94a3b8;
+        border-top: 1px solid var(--border-color);
+        padding-top: 1rem;
+      }
+
+      .controls {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        z-index: 100;
+        display: flex;
+        gap: 1rem;
+      }
+
+      button {
+        background: var(--accent-color);
+        border: none;
+        color: var(--bg-color);
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+      button:hover {
+        opacity: 0.8;
+      }
+
+      .progress-bar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 4px;
+        background: var(--secondary-accent);
+        transition: width 0.3s;
+      }
+
+      .slide-number {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        font-size: 0.9rem;
+        color: #64748b;
+      }
+
+      /* Diagrams & Visuals */
+      .diagram-box {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px dashed var(--accent-color);
+        padding: 1.5rem;
+        border-radius: 8px;
+        text-align: center;
+        margin: 1rem 0;
+      }
+
+      .vs-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+      }
+      .vs-box {
+        padding: 1.5rem;
+        border-radius: 8px;
+        width: 40%;
+        text-align: center;
+      }
+      .vs-defense {
+        background: rgba(56, 189, 248, 0.1);
+        border: 1px solid var(--accent-color);
+      }
+      .vs-attack {
+        background: rgba(244, 114, 182, 0.1);
+        border: 1px solid var(--secondary-accent);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="presentation">
+      <!-- Slide 1: Title -->
+      <section class="slide active">
+        <div
+          class="slide-content"
+          style="
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <div
+            style="
+              font-size: 1.5rem;
+              margin-bottom: 2rem;
+              color: var(--secondary-accent);
+            "
+          >
+            2025 最新資安趨勢報告
+          </div>
+          <h1>
+            生成式 AI 與資訊安全<br /><span
+              style="font-size: 2rem; color: #fff; font-weight: normal"
+              >從破壞者到守護者</span
+            >
+          </h1>
+          <p style="font-size: 1.2rem; margin-top: 3rem">
+            報告人：資工二 陳佑軒<br />
+            日期：2025 年 12 月 16 日
+          </p>
+        </div>
+        <div class="slide-number">1 / 27</div>
+      </section>
+
+      <!-- Slide 2: Agenda -->
+      <section class="slide">
+        <div class="slide-content">
+          <h2>報告大綱</h2>
+          <div class="columns">
+            <div class="col">
+              <ul style="list-style: none; padding: 0">
+                <li>
+                  <strong style="color: var(--accent-color)">01.</strong>
+                  Generative AI 概觀與演進
+                </li>
+                <li>
+                  <strong style="color: var(--accent-color)">02.</strong>
+                  資安攻防的「雙刃劍」
+                </li>
+                <li>
+                  <strong style="color: var(--accent-color)">03.</strong>
+                  防禦面：AI 如何強化安全
+                </li>
+              </ul>
+            </div>
+            <div class="col">
+              <ul style="list-style: none; padding: 0">
+                <li>
+                  <strong style="color: var(--secondary-accent)">04.</strong>
+                  攻擊面：新興威脅與挑戰
+                </li>
+                <li>
+                  <strong style="color: var(--secondary-accent)">05.</strong>
+                  戰略與治理框架
+                </li>
+                <li>
+                  <strong style="color: var(--secondary-accent)">06.</strong>
+                  結論：與 AI 共存
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="slide-number">2 / 27</div>
+      </section>
+
+      <!-- Slide 3: What is GenAI -->
+      <section class="slide">
+        <div class="slide-content">
+          <h2>1. 什麼是生成式 AI (Generative AI)？</h2>
+          <p>
+            不同於傳統 AI 專注於分析與分類，生成式 AI
+            具備<strong>「創造」</strong>全新內容的能力。
+          </p>
+          <div class="diagram-box">
+            <div
+              style="
+                display: flex;
+                justify-content: space-around;
+                font-size: 1.1rem;
+              "
+            >
+              <div>
+                📝 <strong>文字</strong><br />報告、代碼、郵件<br />(GPT-4,
+                Claude 3)
+              </div>
+              <div>
+                🎨 <strong>圖像/影片</strong
+                ><br />設計圖、深偽影像<br />(Midjourney, Sora)
+              </div>
+              <div>
+                🗣️ <strong>語音</strong><br />語音克隆、TTS<br />(ElevenLabs)
+              </div>
+            </div>
+          </div>
+          <ul>
+            <li>
+              <strong>核心機制：</strong> 基於基礎模型 (Foundation
+              Models)，透過海量數據預訓練，學習資料分佈規律。
+            </li>
+            <li>
+              <strong>資安影響：</strong>
+              它不僅是工具，更是能理解上下文、自動編寫攻擊腳本或防禦規則的「代理人
+              (Agent)」。
+            </li>
+          </ul>
+        </div>
+        <div class="slide-number">3 / 27</div>
+      </section>
+
+      <!-- Slide 4: Evolution & Market -->
+      <section class="slide">
+        <div class="slide-content">
+          <h2>市場演進與規模 (2024-2025)</h2>
+          <ul>
+            <li>
+              <strong>爆發式成長：</strong> 2024 年全球生成式 AI
+              資安市場規模已達
+              <span class="stat-highlight">66.6 億美元</span>，預計 2032
+              年將突破千億美元。
+            </li>
+            <li>
+              <strong>企業採用率：</strong> 2025 年全球 AI 資安採用率激增
+              60%，主要動力來自日益複雜的威脅 (如勒索軟體、零時差攻擊)。
+            </li>
+          </ul>
+          <div class="diagram-box">
+            <div style="display: flex; align-items: center; gap: 10px">
+              <div
+                style="
+                  flex: 1;
+                  background: #333;
+                  height: 8px;
+                  border-radius: 4px;
+                "
+              >
+                <div
+                  style="
+                    width: 20%;
+                    background: var(--accent-color);
+                    height: 100%;
+                    border-radius: 4px;
+                  "
+                ></div>
+              </div>
+              <div style="text-align: left">
+                2022: ChatGPT 問世<br /><small>AI 民主化開端</small>
+              </div>
+            </div>
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-top: 10px;
+              "
+            >
+              <div
+                style="
+                  flex: 1;
+                  background: #333;
+                  height: 8px;
+                  border-radius: 4px;
+                "
+              >
+                <div
+                  style="
+                    width: 60%;
+                    background: var(--accent-color);
+                    height: 100%;
+                    border-radius: 4px;
+                  "
+                ></div>
+              </div>
+              <div style="text-align: left">
+                2024: Agentic AI<br /><small
+                  >Microsoft Security Copilot 上市</small
+                >
+              </div>
+            </div>
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-top: 10px;
+              "
+            >
+              <div
+                style="
+                  flex: 1;
+                  background: #333;
+                  height: 8px;
+                  border-radius: 4px;
+                "
+              >
+                <div
+                  style="
+                    width: 90%;
+                    background: var(--accent-color);
+                    height: 100%;
+                    border-radius: 4px;
+                  "
+                ></div>
+              </div>
+              <div style="text-align: left">
+                2025: 規範化<br /><small
+                  >NIST AI RMF 擴展、歐盟 AI 法案生效</small
+                >
+              </div>
+            </div>
+          </div>
+          <div class="footer-citation">
+            Sources: SNS Insider (2024); Grand View Research (2025)
+          </div>
+        </div>
+        <div class="slide-number">4 / 27</div>
+      </section>
+
+      <!-- Slide 5: Double Edged Sword -->
+      <section class="slide">
+        <div class="slide-content">
+          <h2>2. 資安攻防的雙刃劍</h2>
+          <p>AI 同時賦能了攻擊者與防禦者，形成了一場不對稱的軍備競賽。</p>
+          <div class="vs-container">
+            <div class="vs-box vs-defense">
+              <h3>🛡️ 防禦者 (Defenders)</h3>
+              <ul style="text-align: left">
+                <li>海量日誌分析 (Log Analysis)</li>
+                <li>自動化事件響應 (SOAR)</li>
+                <li>代碼弱點修補</li>
+                <li><strong>優勢：</strong> 速度、規模化</li>
+              </ul>
+            </div>
+            <div style="font-size: 2rem">VS</div>
+            <div class="vs-box vs-attack">
+              <h3>⚔️ 攻擊者 (Attackers)</h3>
+              <ul style="text-align: left">
+                <li>完美釣魚郵件 (Phishing)</li>
+                <li>多態惡意軟體 (Polymorphic Malware)</li>
+                <li>深偽詐騙 (Deepfakes)</li>
+                <li><strong>優勢：</strong> 低成本、高隱蔽</li>
+              </ul>
+            </div>
+          </div>
+          <p style="text-align: center; margin-top: 1rem">
+            關鍵問題：誰能更快地適應這項新技術？
+          </p>
+        </div>
+        <div class="slide-number">5 / 27</div>
+      </section>
+
+      <!-- Slide 6: Positive - Intelligent Threat Analysis -->
+      <section class="slide">
+        <div class="slide-content">
+          <h2>3. 正面影響：智慧化威脅分析</h2>
+          <p>傳統 SOC (資安監控中心) 面臨「警報疲勞」，AI 成為最佳副駕駛。</p>
+          <div class="columns">
+            <div class="col">
+              <h3>🔍 從特徵到行為</h3>
+              <ul>
+                <li><strong>傳統：</strong> 依賴已知特徵碼 (Signatures)。</li>
+                <li>
+                  <strong>AI：</strong> 建立「正常行為基線」，即時偵測異常
+                  (Anomaly Detection)。
+                </li>
+                <li>
+                  <strong>成效：</strong> 在高風險環境下，AI 輔助偵測率可達
+                  <span class="stat-highlight">98%</span>。
+                </li>
+              </ul>
+            </div>
+            <div
+              class="col"
+              style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              "
+            >
+              <div class="diagram-box" style="width: 100%">
+                📊 <strong>流量分析</strong><br />
+                ↓<br />
+                🤖 <strong>GenAI 模型</strong><br />
+                (理解上下文 & 關聯性)<br />
+                ↓<br />
+                🚨 <strong>精準警報</strong><br />
+                (減少誤報/False Positives)
+              </div>
+            </div>
+          </div>
+          <div class="footer-citation">
+            Source: Capgemini Research Institute (2023)
+          </div>
+        </div>
+        <div class="slide-number">6 / 27</div>
+      </section>
+
+      <!-- Slide 7: Positive - Automated Operations -->
+      <section class="slide">
+        <div class="slide-content">
+          <h2>自動化資安維運 (Automated Operations)</h2>
+          <p>AI 不僅僅是發現問題，還能「動手」解決問題。</p>
+          <ul>
+            <li>
+              <strong>報告生成：</strong>
+              自動撰寫滲透測試報告、事件調查摘要，解釋技術細節給管理層聽。
+            </li>
+            <li>
+              <strong>SOAR 加速：</strong> 與安全編排自動化回應 (SOAR)
+              結合，自動執行隔離受駭主機、重置密碼等標準動作。
+            </li>
+            <li>
+              <strong>紅隊演練：</strong> 工具如 NodeZero 或 DeepExploit 利用 AI
+              自動化情報蒐集與漏洞利用，持續驗證防禦有效性。
+            </li>
+          </ul>
+          <div
+            class="stat-highlight"
+            style="align-self: center; margin-top: 1rem"
+          >
+            📉 Incident Response 時間縮短 50%
+          </div>
+          <div class="footer-citation">Source: Grand View Research (2025)</div>
+        </div>
+        <div class="slide-number">7 / 27</div>
+      </section>
+
+      <!-- Slide 8: Positive - Anti-Fraud -->
+      <section class="slide">
+        <div class="slide-content">
+          <h2>即時防詐與社交工程防禦</h2>
+          <div class="columns">
+            <div class="col">
+              <h3>📧 郵件安全</h3>
+              <p>GenAI 能分析郵件的「語意」與「情緒」，識破變臉詐騙 (BEC)。</p>
+              <ul>
+                <li>檢測偽造的急迫語氣。</li>
+                <li>比對寄件者歷史寫作風格。</li>
+              </ul>
+            </div>
+            <div class="col">
+              <h3>🕵️‍♂️ Deepfake 偵測</h3>
+              <p>雖然 Deepfake 逼真，但 AI 防禦工具正急起直追。</p>
+              <ul>
+                <li>分析微表情不自然之處。</li>
+                <li>檢測音訊頻譜合成痕跡。</li>
+                <li>
+                  <strong>Intel FakeCatcher：</strong> 透過血流微變化偵測真偽
+                  (高達 96% 準確率)。
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer-citation">
+            Source: Intel (2022); Gartner (2024)
+          </div>
+        </div>
+        <div class="slide-number">8 / 27</div>
+      </section>
+
+      <!-- Slide 9: Case Study - Security Copilot -->
+      <section class="slide">
+        <div class="slide-content">
+          <div
+            style="
+              background: var(--accent-color);
+              color: #000;
+              padding: 0.2rem 1rem;
+              border-radius: 4px;
+              align-self: flex-start;
+            "
+          >
+            Case Study
+          </div>
+          <h2>Microsoft Security Copilot</h2>
+          <p>
+            微軟於 2024 年 4 月全面推出的 AI 資安助理，基於 GPT-4
+            與微軟威脅情資。
+          </p>
+          <div class="diagram-box" style="text-align: left">
+            <p><strong>🧠 核心能力：</strong></p>
+            <ul>
+              <li>
+                <strong>自然語言查詢：</strong> "告訴我昨天有哪些 IP
+                嘗試登入失敗超過 100 次？"
+              </li>
+              <li>
+                <strong>海量數據處理：</strong> 每日處理
+                <span class="stat-highlight">78 兆 (78 Trillion)</span>
+                個資安訊號。
+              </li>
+              <li>
+                <strong>逆向工程輔助：</strong> 自動解釋惡意腳本 (PowerShell,
+                Python) 的功能。
+              </li>
+            </ul>
+          </div>
+          <div class="footer-citation">
+            Source: Microsoft Official Blog (2024)
+          </div>
+        </div>
+        <div class="slide-number">9 / 27</div>
+      </section>
+
+      <!-- Slide 10: Quantitative Benefits -->
+      <section class="slide">
+        <div class="slide-content">
+          <h2>防禦效益的量化數據</h2>
+          <p>引入 GenAI 後，資安團隊的效能顯著提升。</p>
+          <div style="display: flex; gap: 2rem; margin-top: 2rem">
+            <div
+              style="
+                flex: 1;
+                background: rgba(56, 189, 248, 0.1);
+                padding: 1.5rem;
+                border-radius: 8px;
+                text-align: center;
+              "
+            >
+              <div
+                style="
+                  font-size: 3rem;
+                  color: var(--accent-color);
+                  font-weight: bold;
+                "
+              >
+                22%
+              </div>
+              <p>資安分析師速度提升</p>
+            </div>
+            <div
+              style="
+                flex: 1;
+                background: rgba(56, 189, 248, 0.1);
+                padding: 1.5rem;
+                border-radius: 8px;
+                text-align: center;
+              "
+            >
+              <div
+                style="
+                  font-size: 3rem;
+                  color: var(--accent-color);
+                  font-weight: bold;
+                "
+              >
+                97%
+              </div>
+              <p>使用者希望繼續使用 AI 工具</p>
+            </div>
+            <div
+              style="
+                flex: 1;
+                background: rgba(56, 189, 248, 0.1);
+                padding: 1.5rem;
+                border-radius: 8px;
+                text-align: center;
+              "
+            >
+              <div
+                style="
+                  font-size: 3rem;
+                  color: var(--accent-color);
+                  font-weight: bold;
+                "
+              >
+                30%
+              </div>
+              <p>平均修復時間 (MTTR) 縮短</p>
+            </div>
+          </div>
+          <p style="margin-top: 2rem; text-align: center">
+            <em>"新手分析師的準確度提升了 44%，縮小了人才技能差距。"</em>
+          </p>
+          <div class="footer-citation">
+            Source: Microsoft Security Copilot Randomized Controlled Trial
+            (2024)
+          </div>
+        </div>
+        <div class="slide-number">10 / 27</div>
+      </section>
+
+      <!-- Slide 11: Negative - Phishing -->
+      <section class="slide">
+        <div class="slide-content">
+          <h2>4. 負面影響：AI 強化社交工程</h2>
+          <p>攻擊者利用 AI 實現「大規模客製化」的詐騙。</p>
+          <div class="columns">
+            <div class="col">
+              <ul>
+                <li>
+                  <strong>攻擊量激增：</strong> 自 ChatGPT
+                  問世以來，釣魚郵件暴增
+                  <span class="stat-highlight">4,151%</span>。相關惡意郵件在
+                  2024 年增加了 1265%。
+                </li>
+                <li>
+                  <strong>完美偽裝：</strong> AI
+                  修正了以往釣魚信常見的拼寫錯誤與語法瑕疵，讓識別難度大增。
+                </li>
+                <li>
+                  <strong>Click-Through Rate：</strong> AI
+                  生成的釣魚信點擊率高達
+                  <span class="stat-highlight">54%</span> (傳統僅約 12%)。
+                </li>
+              </ul>
+            </div>
+            <div
+              class="col"
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              <div
+                class="diagram-box"
+                style="
+                  background: rgba(244, 114, 182, 0.1);
+                  border-color: var(--secondary-accent);
+                "
+              >
+                ⚠️ <strong>警訊</strong><br />
+                只需 5 分鐘<br />
+                即可生成數百封<br />
+                針對不同員工的<br />
+                客製化詐騙信件
+              </div>
+            </div>
+          </div>
+          <div class="footer-citation">
+            Source: SlashNext (2024); Hoxhunt (2024)
+          </div>
+        </div>
+        <div class="slide-number">11 / 27</div>
+      </section>
+
+      <!-- Slide 12: Case Study - Deepfake Scam -->
+      <section class="slide">
+        <div class="slide-content">
+          <div
+            style="
+              background: var(--secondary-accent);
+              color: #fff;
+              padding: 0.2rem 1rem;
+              border-radius: 4px;
+              align-self: flex-start;
+            "
+          >
+            Case Study
+          </div>
+          <h2>香港跨國公司 Deepfake 詐騙案 (2024)</h2>
+          <p>史上首宗「全 AI 會議」詐騙，震驚全球金融圈。</p>
+          <ul>
+            <li>
+              <strong>事件經過：</strong> 詐騙集團偽造該公司英國總部 CFO
+              (財務長)。
+            </li>
+            <li>
+              <strong>關鍵手法：</strong> 邀請香港員工參加視訊會議，會中<strong
+                >除了受害者外，所有人都是 AI 生成的 Deepfake 影像</strong
+              >。
+            </li>
+            <li>
+              <strong>損失金額：</strong> 員工不疑有他，轉帳 15 次，共計損失
+              <span class="stat-highlight">2,560 萬美元</span> (約 2 億港幣)。
+            </li>
+          </ul>
+          <div
+            style="
+              margin-top: 1rem;
+              border-left: 4px solid var(--secondary-accent);
+              padding-left: 1rem;
+            "
+          >
+            <em
+              >"I saw people I knew, looking and sounding just like them." —
+              受害員工證詞</em
+            >
+          </div>
+          <div class="footer-citation">
+            Source: CNN; SCMP; Hong Kong Police (Feb 2024)
+          </div>
+        </div>
+        <div class="slide-number">12 / 27</div>
+      </section>
+
+      <!-- Slide 13: Malware Creation -->
+      <section class="slide">
+        <div class="slide-content">
+          <h2>惡意程式生成門檻下降</h2>
+          <p>腳本小子 (Script Kiddies) 升級為威脅者，攻擊門檻大幅降低。</p>
+          <div class="columns">
+            <div class="col">
+              <h3>🦠 惡意工具：WormGPT & FraudGPT</h3>
+              <ul>
+                <li>
+                  移除道德限制的「黑化 LLM」，專門用於編寫惡意軟體、詐騙信。
+                </li>
+                <li>
+                  2024-2025 年出現基於 Grok/Mistral 的變種，以訂閱制販售。
+                </li>
+              </ul>
+            </div>
+            <div class="col">
+              <h3>🦎 多態惡意程式 (Polymorphic Code)</h3>
+              <ul>
+                <li>AI 可每 15 秒重寫一次程式碼特徵，卻保留攻擊功能。</li>
+                <li>
+                  <strong>影響：</strong> 輕鬆繞過傳統基於特徵碼
+                  (Signature-based) 的防毒軟體。
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer-citation">
+            Source: Abnormal Security (2024); DeepStrike (2025)
+          </div>
+        </div>
+        <div class="slide-number">13 / 27</div>
+      </section>
+
+      <!-- Slide 14: Prompt Injection & Poisoning -->
+      <section class="slide">
+        <div class="slide-content">
+          <h2>AI 模型本身的風險 (AI Specific Risks)</h2>
+          <p>攻擊目標轉向 AI 模型本身：讓 AI 說謊或洩密。</p>
+          <div class="columns">
+            <div class="col">
+              <h3>💉 Prompt Injection (提示注入)</h3>
+              <ul>
+                <li>透過精心設計的輸入，繞過 AI 的安全護欄。</li>
+                <li>
+                  <strong>實例 (2025)：</strong> Cursor IDE
+                  漏洞允許隱藏指令操控開發者的編輯器；企業 RAG
+                  系統遭注入導致資料外洩。
+                </li>
+              </ul>
+            </div>
+            <div class="col">
+              <h3>☠️ Data Poisoning (資料投毒)</h3>
+              <ul>
+                <li>在訓練數據中混入惡意樣本。</li>
+                <li>
+                  <strong>後果：</strong> 醫療 AI 給出錯誤診斷，或資安 AI
+                  忽略特定惡意流量。
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer-citation">
+            Source: OWASP; Obsidian Security (2025)
+          </div>
+        </div>
+        <div class="slide-number">14 / 27</div>
+      </section>
+
+      <!-- Slide 15: Disinformation -->
+      <section class="slide">
+        <div class="slide-content">
+          <h2>資訊偽造與信任崩壞</h2>
+          <p>在這個時代，"Seeing is no longer believing."</p>
+          <ul>
+            <li>
+              <strong>Deepfake 氾濫：</strong> 2025 Q1 深偽詐騙增加了 19%。
+            </li>
+            <li>
+              <strong>影響範圍：</strong>
+              <ul>
+                <li>
+                  <strong>政治：</strong> 假冒候選人語音影響選舉 (如 2024
+                  美國大選期間案例)。
+                </li>
+                <li><strong>企業：</strong> 偽造 CEO 聲明影響股價。</li>
+                <li><strong>個人：</strong> 身份盜用與色情勒索。</li>
+              </ul>
+            </li>
+          </ul>
+          <div style="text-align: center; margin-top: 1rem">
+            <p>
+              挑戰：如何在大規模生成的假資訊中建立「數位信任 (Digital Trust)」？
+            </p>
+          </div>
+          <div class="footer-citation">
+            Source: BioCatch (2025); WEF Global Risks Report
+          </div>
+        </div>
+        <div class="slide-number">15 / 27</div>
+      </section>
+
+      <!-- Slide 16: Supply Chain Risks -->
+      <section class="slide">
+        <div class="slide-content">
+          <h2>供應鏈風險 (AI Supply Chain)</h2>
+          <p>企業引用的模型或插件可能已遭入侵。</p>
+          <ul>
+            <li>
+              <strong>Hugging Face 等平台風險：</strong>
+              駭客上傳帶有後門的預訓練模型。
+            </li>
+            <li>
+              <strong>LLM 03: Supply Chain Vulnerabilities：</strong> 名列 OWASP
+              Top 10 重要風險。
+            </li>
+            <li>
+              <strong>第三方依賴：</strong> 使用 API 操作外部 AI
+              服務時，資料可能在傳輸或儲存端外洩。
+            </li>
+          </ul>
+          <div class="footer-citation">
+            Source: MITRE ATLAS; OWASP LLM Top 10 (2025)
+          </div>
+        </div>
+        <div class="slide-number">16 / 27</div>
+      </section>
+
+      <!-- Slide 17: Strategy - Enterprise -->
+      <section class="slide">
+        <div class="slide-content">
+          <h2>5. 戰略與治理：企業該如何應對？</h2>
+          <p>
+            建立 PPT 矩陣：人員 (People)、流程 (Process)、技術 (Technology)。
+          </p>
+          <table
+            style="
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 1rem;
+              color: #fff;
+            "
+          >
+            <tr style="background: rgba(255, 255, 255, 0.1)">
+              <th style="padding: 1rem; border: 1px solid var(--border-color)">
+                維度
+              </th>
+              <th style="padding: 1rem; border: 1px solid var(--border-color)">
+                策略重點
+              </th>
+            </tr>
+            <tr>
+              <td style="padding: 1rem; border: 1px solid var(--border-color)">
+                <strong>People</strong>
+              </td>
+              <td style="padding: 1rem; border: 1px solid var(--border-color)">
+                提升 AI 素養，識別 Deepfake；禁止影子 AI (Shadow AI) 使用。
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 1rem; border: 1px solid var(--border-color)">
+                <strong>Process</strong>
+              </td>
+              <td style="padding: 1rem; border: 1px solid var(--border-color)">
+                制定 AUP (使用規範)；建立 AI 模型審核與紅隊演練流程。
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 1rem; border: 1px solid var(--border-color)">
+                <strong>Technology</strong>
+              </td>
+              <td style="padding: 1rem; border: 1px solid var(--border-color)">
+                部署私有化 LLM；實施內容過濾與輸出監控。
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="slide-number">17 / 27</div>
+      </section>
+
+      <!-- Slide 18: Strategy - Technical -->
+      <section class="slide">
+        <div class="slide-content">
+          <h2>技術防護策略</h2>
+          <div class="columns">
+            <div class="col">
+              <h3>🚧 護欄 (Guardrails)</h3>
+              <ul>
+                <li>在 Prompt 輸入與輸出端設立過濾器 (如 NeMo Guardrails)。</li>
+                <li>防止 PII (個人隱私資訊) 外洩與有害內容生成。</li>
+              </ul>
+            </div>
+            <div class="col">
+              <h3>🔒 RAG 安全</h3>
+              <ul>
+                <li>
+                  <strong>檢索增強生成 (RAG)：</strong> 確保 AI
+                  檢索的企業知識庫有嚴格的權限控制 (ACL)。
+                </li>
+                <li>避免 "Data Poisoning" 汙染內部知識庫。</li>
+              </ul>
+            </div>
+          </div>
+          <p style="margin-top: 1rem">
+            <strong>Sandboxing：</strong> 在隔離環境運行 AI
+            生成的程式碼，驗證其安全性。
+          </p>
+        </div>
+        <div class="slide-number">18 / 27</div>
+      </section>
+
+      <!-- Slide 19: Framework - NIST -->
+      <section class="slide">
+        <div class="slide-content">
+          <h2>治理框架：NIST AI RMF</h2>
+          <p>
+            美國國家標準技術局 (NIST) AI 風險管理框架，2024 年新增 GenAI
+            Profile。
+          </p>
+          <div class="diagram-box">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                padding: 0 2rem;
+              "
+            >
+              <div><strong>GOVERN</strong><br /><small>治理文化</small></div>
+              <div>➡️</div>
+              <div><strong>MAP</strong><br /><small>識別風險</small></div>
+              <div>➡️</div>
+              <div><strong>MEASURE</strong><br /><small>評估影響</small></div>
+              <div>➡️</div>
+              <div><strong>MANAGE</strong><br /><small>處理風險</small></div>
+            </div>
+          </div>
+          <ul>
+            <li>
+              <strong>核心精神：</strong> 透過全生命週期的管理來最大化 AI
+              效益並最小化負面影響。
+            </li>
+            <li>
+              <strong>2024 更新：</strong> 強調生成式 AI
+              的特殊風險（如幻覺、版權、Deepfake）。
+            </li>
+          </ul>
+          <div class="footer-citation">
+            Source: NIST AI RMF 1.0 & GenAI Profile (July 2024)
+          </div>
+        </div>
+        <div class="slide-number">19 / 27</div>
+      </section>
+
+      <!-- Slide 20: Framework - OWASP -->
+      <section class="slide">
+        <div class="slide-content">
+          <h2>治理框架：OWASP LLM Top 10 (2025)</h2>
+          <p>開發者必須關注的十大 LLM 應用程式資安風險。</p>
+          <div class="columns">
+            <div class="col">
+              <ol>
+                <li style="color: var(--secondary-accent)">
+                  LLM01: Prompt Injection
+                </li>
+                <li>LLM02: Sensitive Information Disclosure</li>
+                <li>LLM03: Supply Chain Vulnerabilities</li>
+                <li>LLM04: Data and Model Poisoning</li>
+                <li>LLM05: Improper Output Handling</li>
+              </ol>
+            </div>
+            <div class="col">
+              <ol start="6">
+                <li>LLM06: Excessive Agency</li>
+                <li>LLM07: System Prompt Leakage</li>
+                <li>LLM08: Vector and Embedding Weaknesses</li>
+                <li>LLM09: Misinformation</li>
+                <li>LLM10: Unbounded Consumption</li>
+              </ol>
+            </div>
+          </div>
+          <div class="footer-citation">
+            Source: OWASP Foundation (2025 Version)
+          </div>
+        </div>
+        <div class="slide-number">20 / 27</div>
+      </section>
+
+      <!-- Slide 21: Framework - MITRE ATLAS -->
+      <section class="slide">
+        <div class="slide-content">
+          <h2>治理框架：MITRE ATLAS</h2>
+          <p>
+            Adversarial Threat Landscape for AI Systems (AI 系統的威脅圖譜)。
+          </p>
+          <ul>
+            <li>類比於知名的 MITRE ATT&CK 框架，但專注於 AI。</li>
+            <li>
+              <strong>2025 新增戰術：</strong>
+              <ul>
+                <li>GenAI 導致的資料洩露。</li>
+                <li>模型竊取與逆向工程。</li>
+                <li>"LLM Jacking" (劫持 LLM 資源)。</li>
+              </ul>
+            </li>
+            <li>提供真實案例 (Case Studies) 供企業參考防禦。</li>
+          </ul>
+          <div class="footer-citation">
+            Source: MITRE ATLAS (2024-2025 Updates)
+          </div>
+        </div>
+        <div class="slide-number">21 / 27</div>
+      </section>
+
+      <!-- Slide 22: Conclusion -->
+      <section class="slide">
+        <div class="slide-content">
+          <h2>6. 結論：與 AI 共存</h2>
+          <h3>
+            "AI won't replace security analysts, but those who use AI will
+            replace those who don't."
+          </h3>
+          <ul>
+            <li>
+              <strong>接受現實：</strong> AI 已達到「無法回頭 (Point of No
+              Return)」的普及點。
+            </li>
+            <li>
+              <strong>主動防禦：</strong> 善用 AI 的速度與規模來對抗 AI
+              驅動的攻擊 (Fighting AI with AI)。
+            </li>
+            <li>
+              <strong>人機協作：</strong> 讓 AI
+              處理數據，人類處理決策與倫理判斷。
+            </li>
+          </ul>
+          <p
+            style="
+              text-align: center;
+              margin-top: 2rem;
+              color: var(--accent-color);
+              font-size: 1.5rem;
+            "
+          >
+            讓 AI 成為資安的「守護者」，而非「入侵者」。
+          </p>
+        </div>
+        <div class="slide-number">22 / 27</div>
+      </section>
+
+    <!-- Slide 23: Process 1 - Ideation -->
+    <section class="slide">
+        <div class="slide-content" style="justify-content: flex-start;">
+            <div style="background:var(--secondary-accent); color:#fff; padding:0.2rem 1rem; border-radius:4px; align-self:flex-start; margin-bottom: 1rem;">幕後花絮：Human-AI Collaboration</div>
+            <h2>製作流程 1：AI 輔助內容構思</h2>
+            
+            <div style="margin-bottom: 2rem;">
+                <h3>💡 Ideation</h3>
+                <p>利用 ChatGPT 快速生成報告大綱與核心草稿 (content.md)。</p>
+                <ul>
+                    <li>確立論述架構。</li>
+                    <li>提供初步的內容素材。</li>
+                    <li>人機協作：人類定義方向，AI 填充細節。</li>
+                </ul>
+            </div>
+
+            <div style="width: 100%; text-align: center;">
+                <img src="./assets/gpt-finish-content.md.png" style="max-width: 80%; width: auto; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 4px 20px rgba(0,0,0,0.5);" alt="GPT Content Generation">
+            </div>
+        </div>
+        <div class="slide-number">23 / 27</div>
+    </section>
+
+    <!-- Slide 24: Process 2 - Prompt Engineering -->
+    <section class="slide">
+        <div class="slide-content" style="justify-content: flex-start;">
+            <div style="background:var(--secondary-accent); color:#fff; padding:0.2rem 1rem; border-radius:4px; align-self:flex-start; margin-bottom: 1rem;">幕後花絮：Human-AI Collaboration</div>
+            <h2>製作流程 2：精準指令工程 (Prompting)</h2>
+            
+            <div style="margin-bottom: 2rem;">
+                <h3>⚙️ The Prompt</h3>
+                <p>將需求轉化為結構化的 Prompt (prompt.md)。</p>
+                <ul>
+                    <li><strong>Role:</strong> 定義「資安研究員」角色。</li>
+                    <li><strong>Format:</strong> 指定 HTML 輸出格式與視覺要求。</li>
+                    <li><strong>Constraints:</strong> 設定引用規範與語言要求。</li>
+                </ul>
+            </div>
+
+            <div style="width: 100%; text-align: center;">
+               <img src="./assets/prompt-show.md.png" style="max-width: 80%; width: auto; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 4px 20px rgba(0,0,0,0.5);" alt="Prompt Engineering">
+            </div>
+        </div>
+        <div class="slide-number">24 / 27</div>
+    </section>
+
+    <!-- Slide 25: Process 3 - Agent Execution -->
+    <section class="slide">
+        <div class="slide-content" style="justify-content: flex-start;">
+            <div style="background:var(--secondary-accent); color:#fff; padding:0.2rem 1rem; border-radius:4px; align-self:flex-start; margin-bottom: 1rem;">幕後花絮：Human-AI Collaboration</div>
+            <h2>製作流程 3：Agent 自動化執行即微調</h2>
+            
+            <div style="margin-bottom: 2rem;">
+                <h3>🤖 Agent Execution</h3>
+                <p>AI Agent (Gemini) 接收指令並執行：</p>
+                <ul>
+                    <li><strong>Planning:</strong> 自動拆解任務步驟。</li>
+                    <li><strong>Research:</strong> 聯網搜尋最新數據 (2024-2025)。</li>
+                    <li><strong>Coding:</strong> 撰寫 HTML/CSS/JS 代碼。</li>
+                </ul>
+                <p style="margin-top: 1rem; color: var(--accent-color);"><strong>最後一哩路：</strong> 由人類進行最終審閱與微調。</p>
+            </div>
+
+            <div style="width: 100%; text-align: center;">
+                <img src="./assets/gemini-planning-content.png" style="max-width: 80%; width: auto; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 4px 20px rgba(0,0,0,0.5);" alt="Agent Planning">
+            </div>
+        </div>
+        <div class="slide-number">25 / 27</div>
+    </section>
+
+      <!-- Slide 23: References 1 -->
+      <section class="slide">
+        <div class="slide-content">
+          <h2>主要參考文獻 (1/2)</h2>
+          <ul style="font-size: 1rem">
+            <li>
+              NIST (2024).
+              <em
+                >Artificial Intelligence Risk Management Framework (AI RMF 1.0)
+                & GenAI Profile (NIST AI 600-1)</em
+              >. National Institute of Standards and Technology.
+            </li>
+            <li>
+              OWASP (2025).
+              <em
+                >OWASP Top 10 for Large Language Model Applications (Version
+                2025)</em
+              >. The OWASP Foundation.
+            </li>
+            <li>
+              Microsoft (2024).
+              <em
+                >Microsoft Security Copilot: Randomized Controlled Trial
+                Results</em
+              >. Microsoft Security Blog.
+            </li>
+            <li>
+              MITRE (2025).
+              <em
+                >MITRE ATLAS: Adversarial Threat Landscape for
+                Artificial-Intelligence Systems</em
+              >.
+            </li>
+            <li>
+              SNS Insider (2024).
+              <em
+                >Generative AI in Cybersecurity Market Size & Growth Reports</em
+              >.
+            </li>
+          </ul>
+        </div>
+        <div class="slide-number">26 / 27</div>
+      </section>
+
+      <!-- Slide 24: References 2 -->
+      <section class="slide">
+        <div class="slide-content">
+          <h2>主要參考文獻 (2/2)</h2>
+          <ul style="font-size: 1rem">
+            <li>
+              SlashNext (2024).
+              <em
+                >The State of Phishing 2024: A 1265% Increase in Malicious
+                Emails</em
+              >.
+            </li>
+            <li>
+              CNN (2024).
+              <em
+                >Finance worker pays out $25 million after video call with
+                deepfake 'chief financial officer'</em
+              >.
+            </li>
+            <li>
+              Abnormal Security (2024).
+              <em>The Rise of Offensive AI: WormGPT & FraudGPT</em>.
+            </li>
+            <li>
+              Grand View Research (2025).
+              <em>Artificial Intelligence In Cybersecurity Market Report</em>.
+            </li>
+            <li>
+              Capgemini (2023).
+              <em>Reinforcing defenses: The Role of AI in Cybersecurity</em>.
+            </li>
+          </ul>
+          <p style="text-align: center; margin-top: 2rem">僅供學術報告使用</p>
+        </div>
+        <div class="slide-number">27 / 27</div>
+      </section>
+
+      <!-- Controls -->
+      <div class="controls">
+        <button id="prevBtn" onclick="prevSlide()">← Previous</button>
+        <button id="nextBtn" onclick="nextSlide()">Next →</button>
+      </div>
+      <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+    </div>
+
+    <script>
+      let currentSlide = 0;
+      const slides = document.querySelectorAll(".slide");
+      const totalSlides = slides.length;
+      const progressBar = document.getElementById("progressBar");
+
+      function showSlide(index) {
+        if (index < 0) index = 0;
+        if (index >= totalSlides) index = totalSlides - 1;
+
+        currentSlide = index;
+
+        slides.forEach((slide, i) => {
+          slide.classList.remove("active");
+          if (i === currentSlide) {
+            slide.classList.add("active");
+          }
+        });
+
+        // Update progress bar
+        const progress = ((currentSlide + 1) / totalSlides) * 100;
+        progressBar.style.width = progress + "%";
+      }
+
+      function nextSlide() {
+        showSlide(currentSlide + 1);
+      }
+
+      function prevSlide() {
+        showSlide(currentSlide - 1);
+      }
+
+      // Keyboard navigation
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === " ") {
+          nextSlide();
+        } else if (e.key === "ArrowLeft") {
+          prevSlide();
+        }
+      });
+
+      // Touch Support (Simple Swipe)
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      document.addEventListener("touchstart", (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      });
+
+      document.addEventListener("touchend", (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+      });
+
+      function handleSwipe() {
+        if (touchEndX < touchStartX - 50) nextSlide();
+        if (touchEndX > touchStartX + 50) prevSlide();
+      }
+
+      // Initialize
+      showSlide(0);
+    </script>
+  </body>
+</html>
